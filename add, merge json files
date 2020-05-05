@@ -1,0 +1,33 @@
+# add new "name" with "value" and merge jsons files
+
+/* multi json files with similar names: 
+  index.json
+  index.his.json 
+  index.her.json
+  index.their.json
+*/
+
+$filePath = "index*.json"
+
+$document=@()
+
+# get all json files with subfolder
+Get-ChildItem $filePath -Recurse | ForEach-Object { 
+    $currentName = 'my'
+    
+    # find match for each name
+    $isFileNameMatch = $_.Name -match '^index\.?(?<name>.*)\.json$'
+    if ($isFileNameMatch){
+        if ($Matches.name -ne ''){
+            $currentName = $Matches.name
+        }
+        
+        # add "name" to relative json
+        $currentContent = Get-Content $_.FullName -Raw | ConvertFrom-Json
+        $currentContent | Add-Member -Type NoteProperty -Name 'name' -Value $currentname
+        $currentContent | Add-Member -Type NoteProperty -Name '@search.action' -Value 'upload'
+        
+        # merge multi jsons to document
+        $document += $currentContent
+    }
+}
