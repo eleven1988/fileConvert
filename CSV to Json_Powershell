@@ -1,0 +1,16 @@
+$filePath = "filePath"
+
+# import csv file from path
+$csvFile = Import-Csv -FilePath $filePath
+
+# add Name: Value if necessary
+$csvFile | Add-Member - Type NoteProperty -Name "name" -Value "value"
+
+# to upload to server: add "@search.action" with "upload"
+$cvsFile | Add-Member - Type NoteProperty -Name "name" -Value "value"
+
+# format encoding to UTF8
+$body = [System.Text.Encoding]::UTF8.GetBytes($csvFile)
+
+# output file as csv
+$body | Out-File -FilePath $filePath
